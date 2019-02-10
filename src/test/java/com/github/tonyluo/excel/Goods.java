@@ -1,28 +1,17 @@
-# ExcelUtil
-Import/Export Excel util, base on apache POI
+package com.github.tonyluo.excel;
 
-##Usage: 
+import com.github.tonyluo.excel.annotation.ExcelCell;
+import com.github.tonyluo.excel.annotation.ExcelSheet;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 
-**_1. Include maven dependency_**
-
-```xml
-
-<dependency>
-  <groupId>com.github.tonyluo</groupId>
-  <artifactId>excel-util</artifactId>
-  <version>1.0.0</version>
-</dependency>
-
-```
-
-
-**_2. Define field/cell mapping in javabean:_**
-
-```java
+import java.time.Instant;
+import java.util.Date;
 
 @ExcelSheet(name="商品列表")
 public class Goods {
-    @ExcelCell(col="A",name="商品名")
+//    @ExcelCell(col="A",name="商品名",comment = "测试A1单元格备注功能") //
+    //java.lang.IllegalArgumentException: Multiple cell comments in one cell are not allowed, cell: A1
+    @ExcelCell(col="A",name="商品名") // TODO when  cell setComment in A1, will throw error exception, need further check
     private String name; //商品名
 
     @ExcelCell(col ="B",name="单位",width = 4, align = HorizontalAlignment.RIGHT,comment = "测试B1单元格备注功能")
@@ -43,7 +32,7 @@ public class Goods {
     @ExcelCell(col="G", name="数量", comment = "测试G1单元格备注功能")
     private int quantity;
 
-    @ExcelCell(col="H", name="价格",hidden = true,comment = "test hide column")
+    @ExcelCell(col="H", name="价格",hidden = true)
     private double price;
 
     @ExcelCell(col="I", name="售价",format ="#,##0.00")
@@ -59,31 +48,3 @@ public class Goods {
             '}';
     }
 }
-
-
-
-```
-
-**_3. Import/Export excel_**
-
-```java
-
-public class ExcelUtilTest {
-
-    @Test
-    public void testImportExport() throws IOException, InstantiationException, IllegalAccessException {
-        
-        List<Goods> list = ExcelUtil.importFromPath("src/test/resources/goods.xlsx", Goods.class,1);
-        for (Goods goods : list) {
-            System.out.println(goods);
-
-        }
-        
-        ExcelUtil.exportToFile("src/test/resources/export-goods.xlsx", list);
-
-    }
-
-   
-}
-
-```
