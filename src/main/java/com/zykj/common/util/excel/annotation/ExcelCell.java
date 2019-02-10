@@ -5,8 +5,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import java.lang.annotation.*;
 
 /**
- * @ClassName: ExcelCell
- * @Description: 实体字段与excel列号关联的注解
+ * 实体字段与excel列号关联的注解
  * @author Tony
  *
  */
@@ -46,7 +45,7 @@ public @interface ExcelCell {
 
     /**
      * format: "#,##0.0000"
-     * @return
+     * @return String
      */
     String format()  default "";
 
@@ -64,7 +63,7 @@ public @interface ExcelCell {
     /**
      *
      *     //注：要锁定单元格需先为此表单设置保护密码，设置之后此表单默认为所有单元格锁定，可使用setLocked(false)为指定单元格设置不锁定。
-     * @return
+     * @return true if need lock sheet
      */
     boolean locked() default false; // ExcelSheet的protectSheet为true时候才能生效
 

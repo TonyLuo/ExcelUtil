@@ -41,8 +41,8 @@ public @interface ExcelSheet {
      */
 
     /**
-     * colSplit      Horizontal position of split.
-     * @return
+     * colSplit Horizontal position of split.
+     * @return int
      */
     int colSplit() default -1;
     int rowSplit() default -1;

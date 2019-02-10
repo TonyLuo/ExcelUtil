@@ -161,14 +161,14 @@ public class ExcelConverter {
     }
 
     /**
-     * @param book
-     * @param clazz
-     * @param startRow 开始的行
-     * @param endRow   结束的行，如果endRow<0, 则取sheet的最后一行
-     * @param <T>
-     * @return
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @param book Workbook
+     * @param clazz class
+     * @param startRow <p>start row</p>
+     * @param endRow <p>end row, if endRow = -1, will get the last row of the sheet</p>
+     * @param <T> class
+     * @return java bean list
+     * @throws IllegalAccessException IllegalAccessException
+     * @throws InstantiationException InstantiationException
      */
     public static <T> List<T> getBeanListFromWorkBook(Workbook book, Class<T> clazz, int startRow, int endRow) throws IllegalAccessException, InstantiationException {
 
@@ -177,15 +177,15 @@ public class ExcelConverter {
 
     /**
      *
-     * @param book
-     * @param clazz
-     * @param sheetIndex
-     * @param startRow 开始的行
-     * @param endRow  结束的行，如果endRow<0, 则取sheet的最后一行
-     * @param <T>
-     * @return
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @param book Workbook
+     * @param clazz class
+     * @param sheetIndex sheetIndex
+     * @param startRow <p>start row</p>
+     * @param endRow <p>end row, if endRow = -1, will get the last row of the sheet</p>
+     * @param <T> class
+     * @return java bean list
+     * @throws IllegalAccessException IllegalAccessException
+     * @throws InstantiationException InstantiationException
      */
     public static <T> List<T> getBeanListFromWorkBook(Workbook book, Class<T> clazz, int sheetIndex, int startRow, int endRow) throws IllegalAccessException, InstantiationException {
         List<T> list = new ArrayList<T>();
@@ -359,7 +359,6 @@ public class ExcelConverter {
 
             // Assign the comment to the cell
 
-            System.out.println("cell.getCellComment():::=====:::" + cell.getCellComment());
             cell.setCellComment(comment);
         }
         // head-style、field-data-style

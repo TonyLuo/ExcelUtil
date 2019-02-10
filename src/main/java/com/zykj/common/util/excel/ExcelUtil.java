@@ -9,11 +9,16 @@ import java.util.List;
 
 public class ExcelUtil {
 
+
     /**
-     * 导出Excel文件到磁盘
-     *
-     * @param filePath
-     * @param entityList 数据
+     * <p>导出Excel文件到磁盘</p>
+     * @param filePath file path
+     * @param entityList data list
+     * @param <T> class
+     * @return file path
+     * @throws IOException IOException
+     * @throws InstantiationException InstantiationException
+     * @throws IllegalAccessException IllegalAccessException
      */
     public static <T> String exportToFile(String filePath, List<T> entityList) throws IllegalAccessException, InstantiationException, IOException {
 
@@ -35,10 +40,15 @@ public class ExcelUtil {
         return filePath;
     }
 
+
     /**
      * 导出Excel字节数据
-     *
-     * @param entityList 数据
+     * @param entityList data list
+     * @param <T> class
+     * @return byte
+     * @throws IOException IOException
+     * @throws InstantiationException InstantiationException
+     * @throws IllegalAccessException IllegalAccessException
      */
     public static <T> byte[] exportToBytes(List<T> entityList) throws IllegalAccessException, InstantiationException, IOException {
         // workbook
@@ -74,14 +84,17 @@ public class ExcelUtil {
     }
 
 
+
     /**
-     * generate javabean from excel path
      *
-     * @param path
-     * @param clazz
-     * @param <T>
-     * @return
-     * @throws Exception
+     * @param path excel file path
+     * @param clazz class
+     * @param startRow start row
+     * @param <T> class
+     * @return java bean list
+     * @throws IOException IOException
+     * @throws InstantiationException InstantiationException
+     * @throws IllegalAccessException IllegalAccessException
      */
     public static <T> List<T> importFromPath(String path, Class<T> clazz, int startRow) throws IOException, IllegalAccessException, InstantiationException {
         Workbook book = ExcelConverter.readFile(path);
@@ -89,13 +102,15 @@ public class ExcelUtil {
     }
 
     /**
-     * generate javabean from excel file
      *
-     * @param file
-     * @param clazz
-     * @param <T>
-     * @return
-     * @throws Exception
+     * @param file excel file path
+     * @param clazz class
+     * @param startRow start row
+     * @param <T> class
+     * @return java bean list
+     * @throws IOException IOException
+     * @throws InstantiationException InstantiationException
+     * @throws IllegalAccessException IllegalAccessException
      */
     public static <T> List<T> importFromFile(File file, Class<T> clazz, int startRow) throws IOException, InstantiationException, IllegalAccessException {
         Workbook book = ExcelConverter.readFile(file);
@@ -104,15 +119,15 @@ public class ExcelUtil {
     }
 
     /**
-     * generate javabean from InputStream
      *
-     * @param stream
-     * @param clazz
-     * @param <T>
-     * @return
-     * @throws IOException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
+     * @param stream input stream
+     * @param clazz class
+     * @param startRow start row
+     * @param <T> class
+     * @return java bean list
+     * @throws IOException IOException
+     * @throws InstantiationException InstantiationException
+     * @throws IllegalAccessException IllegalAccessException
      */
     public static <T> List<T> importFromInputStream(InputStream stream, Class<T> clazz, int startRow) throws IOException, InstantiationException, IllegalAccessException {
         Workbook book = ExcelConverter.readFromInputStream(stream);
@@ -125,14 +140,15 @@ public class ExcelUtil {
 
     /**
      *
-     * @param book
-     * @param clazz
-     * @param sheetIndex
-     * @param startRow
-     * @param endRow
-     * @param <T>
-     * @return
-     * @throws Exception
+     * @param book workbook
+     * @param clazz class
+     * @param sheetIndex sheet Index
+     * @param startRow start row
+     * @param endRow end row
+     * @param <T> class
+     * @return java bean list
+     * @throws InstantiationException InstantiationException
+     * @throws IllegalAccessException IllegalAccessException
      */
     public static <T> List<T> importExcel(Workbook book , Class<T> clazz,  int sheetIndex, int startRow, int endRow) throws InstantiationException, IllegalAccessException {
         return ExcelConverter.getBeanListFromWorkBook(book, clazz,sheetIndex, startRow,endRow);

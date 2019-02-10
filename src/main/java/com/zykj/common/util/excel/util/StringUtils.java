@@ -114,7 +114,7 @@ public class StringUtils {
      *
      * <p>The String is trimmed using {@link String#trim()}.
      * Trim removes start and end characters &lt;= 32.
-     * To strip whitespace use {@link #stripToEmpty(String)}.</p>
+     * </p>
      *
      * <pre>
      * StringUtils.trimToEmpty(null)          = ""

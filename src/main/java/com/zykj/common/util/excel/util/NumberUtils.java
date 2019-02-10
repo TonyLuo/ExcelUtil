@@ -28,7 +28,7 @@ public class NumberUtils {
      * <p><code>null</code> and empty/blank {@code String} will return
      * <code>false</code>.</p>
      *
-     * input resulting in <code>true</code>.</p>
+     * input resulting in <code>true</code>
      *
      * @param str  the <code>String</code> to check
      * @return <code>true</code> if the string is a correctly formatted number
