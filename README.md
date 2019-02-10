@@ -3,9 +3,22 @@ Import/Export Excel, base on apache POI
 
 ***Usage***: 
 
-**_1. Define field/cell mapping in javabean:_**
+**_1. Include maven dependency_**
 
-```$xslt
+```xml
+
+<dependency>
+  <groupId>com.github.tonyluo</groupId>
+  <artifactId>excel-util</artifactId>
+  <version>1.0.0</version>
+</dependency>
+
+```
+
+
+**_2. Define field/cell mapping in javabean:_**
+
+```java
 
 @ExcelSheet(name="商品列表")
 public class Goods {
@@ -51,13 +64,11 @@ public class Goods {
 
 ```
 
-**_2. import/export excel_**
+**_3. Import/Export excel_**
 
-```$xslt
-
+```java
 
 public class ExcelUtilTest {
-
 
     @Test
     public void testImportExport() throws IOException, InstantiationException, IllegalAccessException {
@@ -74,4 +85,5 @@ public class ExcelUtilTest {
 
    
 }
+
 ```
