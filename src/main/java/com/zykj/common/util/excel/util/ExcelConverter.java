@@ -285,6 +285,7 @@ public class ExcelConverter {
         CellStyle cellStyle = workbook.createCellStyle();
         cellStyle.setWrapText(excelCell.wrapText()); //Set wordwrap
         cellStyle.setLocked(excelCell.locked()); //Set locked
+        cellStyle.setAlignment(excelCell.align());
 
         if (Date.class.equals(fieldType) || Instant.class.equals(fieldType)) {
             cell.setCellType(NUMERIC);
@@ -346,9 +347,9 @@ public class ExcelConverter {
         String commentText = excelCell.comment();
         if (StringUtils.isNotEmpty(commentText)) {
             CreationHelper createHelper = workbook.getCreationHelper();
-            ClientAnchor anchor = createHelper.createClientAnchor();
 
             Drawing drawing = sheet.createDrawingPatriarch();
+            ClientAnchor anchor = createHelper.createClientAnchor();
             Comment comment = drawing.createCellComment(anchor);
             comment.setString(createHelper.createRichTextString(commentText));
 
@@ -358,6 +359,7 @@ public class ExcelConverter {
 
             // Assign the comment to the cell
 
+            System.out.println("cell.getCellComment():::=====:::" + cell.getCellComment());
             cell.setCellComment(comment);
         }
         // head-style、field-data-style

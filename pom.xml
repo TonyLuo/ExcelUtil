@@ -7,6 +7,8 @@
     <groupId>com.zykj.util</groupId>
     <artifactId>excel-util</artifactId>
     <version>1.0.0</version>
+    <packaging>jar</packaging>
+
     <build>
         <plugins>
             <plugin>
@@ -19,6 +21,29 @@
             </plugin>
         </plugins>
     </build>
+    <description>import/export excel util, base poi</description>
+    <url>https://github.com/TonyLuo/ExcelUtil</url>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>TonyLuo</name>
+            <email>luozhuming@gmail.com</email>
+        </developer>
+    </developers>
+    <scm>
+        <url>https://github.com/TonyLuo/ExcelUtil.git</url>
+        <tag>excel-util-1.0.0</tag>
+    </scm>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <gpg.executable>gpg2</gpg.executable>
+    </properties>
 
     <dependencies>
 
@@ -42,4 +67,53 @@
 
 
     </dependencies>
+    <distributionManagement>
+        <site>
+            <id>master</id>
+            <name>ExcelUtil GitHub Pages</name>
+            <url>https://github.com/TonyLuo/ExcelUtil.git</url>
+        </site>
+        <snapshotRepository>
+            <id>nexus-release</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>nexus-release</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+    <profiles>
+        <!-- mvn clean javadoc:jar source:jar deploy -P release -Dgpg.passphrase=xxxx -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- GPG -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>nexus-release</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+                </snapshotRepository>
+                <repository>
+                    <id>nexus-release</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 </project>

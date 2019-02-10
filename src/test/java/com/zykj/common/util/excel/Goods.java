@@ -9,10 +9,12 @@ import java.util.Date;
 
 @ExcelSheet(name="商品列表")
 public class Goods {
-    @ExcelCell(col="A",name="商品名", comment = "测试单元格备注功能")
+//    @ExcelCell(col="A",name="商品名",comment = "测试A1单元格备注功能") //
+    //java.lang.IllegalArgumentException: Multiple cell comments in one cell are not allowed, cell: A1
+    @ExcelCell(col="A",name="商品名") // TODO when  cell setComment in A1, will throw error exception, need further check
     private String name; //商品名
 
-    @ExcelCell(col ="B",name="单位",width = 4, align = HorizontalAlignment.RIGHT)
+    @ExcelCell(col ="B",name="单位",width = 4, align = HorizontalAlignment.RIGHT,comment = "测试B1单元格备注功能")
     private String unit; //单位
 
     @ExcelCell(col ="C",name="规格",align = HorizontalAlignment.CENTER)
@@ -27,7 +29,7 @@ public class Goods {
     @ExcelCell(col="F", name="出厂日期",dateFormat = "MM/dd/yyyy")
     private Instant productionDate;
 
-    @ExcelCell(col="G", name="数量")
+    @ExcelCell(col="G", name="数量", comment = "测试G1单元格备注功能")
     private int quantity;
 
     @ExcelCell(col="H", name="价格",hidden = true)
