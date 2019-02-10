@@ -80,6 +80,7 @@ public class Goods {
 
 * **_Import/Export excel_**
 
+
 ```java
 
 public class ExcelUtilTest {
@@ -101,3 +102,11 @@ public class ExcelUtilTest {
 }
 
 ```
+
+Testing excel file sample: [goods.xlsx][goods].
+
+  [goods]: https://github.com/TonyLuo/ExcelUtil/raw/master/src/test/resources/goods.xlsx
+ 
+Please refer to test package for more detail: [Test package][test]
+ 
+  [test]: https://github.com/TonyLuo/ExcelUtil/tree/master/src/test
