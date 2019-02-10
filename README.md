@@ -1,9 +1,11 @@
-# ExcelUtil
-Import/Export Excel util, base on apache POI
+ExcelUtil
+=======
+
+**Import/Export Excel util, base on apache POI**
 
 ##Usage: 
 
-**_1. Include maven dependency_**
+* **_Include maven dependency_**
 
 ```xml
 
@@ -16,7 +18,7 @@ Import/Export Excel util, base on apache POI
 ```
 
 
-**_2. Define field/cell mapping in javabean:_**
+* **_Define field/cell mapping in javabean:_**
 
 ```java
 
@@ -64,7 +66,7 @@ public class Goods {
 
 ```
 
-**_3. Import/Export excel_**
+* **_Import/Export excel_**
 
 ```java
 
