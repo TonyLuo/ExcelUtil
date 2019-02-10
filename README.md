@@ -23,7 +23,7 @@ Usage:
 
 ```java
 
-@ExcelSheet(name="商品列表")
+@ExcelSheet(name="商品列表",colSplit = 4, rowSplit = 1, protectSheet = false)
 public class Goods {
     @ExcelCell(col="A",name="商品名")
     private String name; //商品名
