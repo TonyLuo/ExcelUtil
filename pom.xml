@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <name>ExcelUtil</name>
 
-    <groupId>com.zykj.util</groupId>
+    <groupId>com.github.tonyluo</groupId>
     <artifactId>excel-util</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
@@ -100,15 +100,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <version>2.10.3</version>
+                <configuration>
+                    <!-- 解决 java8 下发布到 maven 中心库时，生成 doc 的异常 -->
+                    <additionalparam>-Xdoclint:none</additionalparam>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <outputDirectory>${basedir}</outputDirectory>
+                    <reportOutputDirectory>${basedir}</reportOutputDirectory>
+                </configuration>
             </plugin>
             <!-- mvn clean javadoc:jar source:jar deploy -P release -Dgpg.passphrase=xxxx -->
 
@@ -173,4 +172,12 @@
             </distributionManagement>
         </profile>
     </profiles>
+    <!-- 使用aliyun maven -->
+    <repositories>
+        <repository>
+            <id>aliyun</id>
+            <name>aliyun</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+        </repository>
+    </repositories>
 </project>
