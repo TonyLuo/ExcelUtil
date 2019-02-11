@@ -144,12 +144,13 @@ public class ExcelConverter {
 
     private static int getColumnIndex(ExcelCell excelCell) {
 //        int col = excelCell.col();
-        int columnIndex = 0;
-        String colName = excelCell.col();
-        if (StringUtils.isNotEmpty(colName)) {
-            columnIndex = columnName2Index(colName);
-        }
-        return columnIndex;
+//        int columnIndex = 0;
+//        String colName = excelCell.col();
+//        if (StringUtils.isNotEmpty(colName)) {
+//            columnIndex = columnName2Index(colName);
+//        }
+//        return columnIndex;
+        return columnName2Index(excelCell.col());
     }
 
 
