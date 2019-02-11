@@ -351,15 +351,14 @@ public class ExcelConverter {
 
             Drawing drawing = sheet.createDrawingPatriarch();
             ClientAnchor anchor = createHelper.createClientAnchor();
+
+            //fix bug: https://bz.apache.org/bugzilla/show_bug.cgi?id=59393
+            anchor.setRow1(cell.getRowIndex());
+            anchor.setCol1(cell.getColumnIndex());
             Comment comment = drawing.createCellComment(anchor);
             comment.setString(createHelper.createRichTextString(commentText));
 
-            // Set the row and column here
-            comment.setRow(cell.getRowIndex());
-            comment.setColumn(cell.getColumnIndex());
-
             // Assign the comment to the cell
-
             cell.setCellComment(comment);
         }
         // head-style、field-data-style
