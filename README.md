@@ -24,7 +24,7 @@ Usage:
 <dependency>
   <groupId>com.github.tonyluo</groupId>
   <artifactId>excel-util</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 
 ```
