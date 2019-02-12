@@ -1,5 +1,9 @@
 [![Build Status](https://dev.azure.com/luozhuming/luozhuming/_apis/build/status/TonyLuo.ExcelUtil?branchName=master)](https://dev.azure.com/luozhuming/luozhuming/_build/latest?definitionId=1&branchName=master)
+<!--
+Add a CI status badge to your repository:
 
+https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started-yaml?view=azure-devops#add-a-ci-status-badge-to-your-repository
+-->
 ExcelUtil
 =======
 
