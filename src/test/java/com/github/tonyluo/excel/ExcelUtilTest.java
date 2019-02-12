@@ -1,7 +1,5 @@
 package com.github.tonyluo.excel;
 
-import com.github.tonyluo.excel.util.ExcelConverter;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -11,7 +9,7 @@ public class ExcelUtilTest {
 
     @Test
     public void exportToFile() {
-        Assert.assertEquals(ExcelConverter.columnName2Index("A"),1);
+//        Assert.assertEquals(ExcelConverter.columnName2Index("A"),1);
 
     }
 
