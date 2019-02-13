@@ -105,8 +105,8 @@
                     <!-- 解决 java8 下发布到 maven 中心库时，生成 doc 的异常 -->
                     <additionalparam>-Xdoclint:none</additionalparam>
                     <encoding>${project.build.sourceEncoding}</encoding>
-                    <outputDirectory>${basedir}/java-doc</outputDirectory>
-                    <reportOutputDirectory>${basedir}/java-doc</reportOutputDirectory>
+                    <outputDirectory>${basedir}/docs</outputDirectory>
+                    <reportOutputDirectory>${basedir}/docs</reportOutputDirectory>
                 </configuration>
             </plugin>
             <!-- mvn clean javadoc:jar source:jar deploy -P release -Dgpg.passphrase=xxxx -->
