@@ -3,6 +3,7 @@ package com.github.tonyluo.excel.annotation;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 
 import java.lang.annotation.*;
+import java.util.Map;
 
 /**
  * 实体字段与excel列号关联的注解
@@ -68,8 +69,15 @@ public @interface ExcelCell {
     boolean locked() default false; // ExcelSheet的protectSheet为true时候才能生效
 
 
+    //This code will do the same but offer the user a drop down list to select a value from.
+    // {validationType:DataValidationConstraint.ValidationType.LIST,OperatorType:DataValidationConstraint.OperatorType.EQUAL, list:[{"name":"男","value":0},{"name":"女","value":1}]}
+    //To obtain a validation that would check the value entered was, for example, an integer between 10 and 100, use the XSSFDataValidationHelper(s) createNumericConstraint(int, int, String, String) factory method.
+    // {validationType:DataValidationConstraint.ValidationType.INTEGER,OperatorType:DataValidationConstraint.OperatorType.BETWEEN,list:[{"name":"min","value":10},{"name":"max","value":100}]}
+    String validation() default "";
 
-//    String[] dvConstraint() default {};
+    //Nested classes use "$" as the separator: Class.forName("a.b.TopClass$InnerClass");
+    //https://stackoverflow.com/questions/7007831/instantiate-nested-static-class-using-class-forname
+    String constraintClass() default "";
 
 
 

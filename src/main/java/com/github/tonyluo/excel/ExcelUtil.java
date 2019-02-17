@@ -3,6 +3,7 @@ package com.github.tonyluo.excel;
 import com.github.tonyluo.excel.util.ExcelConverter;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.util.List;
@@ -20,10 +21,10 @@ public class ExcelUtil {
      * @throws InstantiationException InstantiationException
      * @throws IllegalAccessException IllegalAccessException
      */
-    public static <T> String exportToFile(String filePath, List<T> entityList) throws IllegalAccessException, InstantiationException, IOException {
+    public static <T> String exportToFile(String filePath, List<T> entityList) throws IllegalAccessException, InstantiationException, IOException, ClassNotFoundException {
 
         // workbook
-        SXSSFWorkbook workbook = ExcelConverter.generateWorkbook(entityList);
+        XSSFWorkbook workbook = ExcelConverter.generateWorkbook(entityList);
 
         FileOutputStream fileOutputStream = null;
         try {
@@ -50,9 +51,9 @@ public class ExcelUtil {
      * @throws InstantiationException InstantiationException
      * @throws IllegalAccessException IllegalAccessException
      */
-    public static <T> byte[] exportToBytes(List<T> entityList) throws IllegalAccessException, InstantiationException, IOException {
+    public static <T> byte[] exportToBytes(List<T> entityList) throws IllegalAccessException, InstantiationException, IOException, ClassNotFoundException {
         // workbook
-        SXSSFWorkbook workbook = ExcelConverter.generateWorkbook(entityList);
+        XSSFWorkbook workbook = ExcelConverter.generateWorkbook(entityList);
 
         ByteArrayOutputStream outputStream = null;
         byte[] result = null;
@@ -71,14 +72,14 @@ public class ExcelUtil {
 
     }
 
-    private static void closeWorkbook(SXSSFWorkbook workbook, OutputStream outputStream) throws IOException {
+    private static void closeWorkbook(XSSFWorkbook workbook, OutputStream outputStream) throws IOException {
         if (outputStream != null) {
             outputStream.flush();
             outputStream.close();
         }
         if (workbook != null) {
             // dispose of temporary files backing this workbook on disk
-            workbook.dispose();
+            workbook.close();
         }
 
     }
@@ -96,7 +97,7 @@ public class ExcelUtil {
      * @throws InstantiationException InstantiationException
      * @throws IllegalAccessException IllegalAccessException
      */
-    public static <T> List<T> importFromPath(String path, Class<T> clazz, int startRow) throws IOException, IllegalAccessException, InstantiationException {
+    public static <T> List<T> importFromPath(String path, Class<T> clazz, int startRow) throws IOException, IllegalAccessException, InstantiationException, ClassNotFoundException {
         Workbook book = ExcelConverter.readFile(path);
         return importExcel(book,clazz,0,startRow,-1);
     }
@@ -112,7 +113,7 @@ public class ExcelUtil {
      * @throws InstantiationException InstantiationException
      * @throws IllegalAccessException IllegalAccessException
      */
-    public static <T> List<T> importFromFile(File file, Class<T> clazz, int startRow) throws IOException, InstantiationException, IllegalAccessException {
+    public static <T> List<T> importFromFile(File file, Class<T> clazz, int startRow) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         Workbook book = ExcelConverter.readFile(file);
         return importExcel(book,clazz,0,startRow,-1);
 
@@ -129,7 +130,7 @@ public class ExcelUtil {
      * @throws InstantiationException InstantiationException
      * @throws IllegalAccessException IllegalAccessException
      */
-    public static <T> List<T> importFromInputStream(InputStream stream, Class<T> clazz, int startRow) throws IOException, InstantiationException, IllegalAccessException {
+    public static <T> List<T> importFromInputStream(InputStream stream, Class<T> clazz, int startRow) throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         Workbook book = ExcelConverter.readFromInputStream(stream);
         return importExcel(book,clazz,0,startRow,-1);
     }
@@ -150,7 +151,7 @@ public class ExcelUtil {
      * @throws InstantiationException InstantiationException
      * @throws IllegalAccessException IllegalAccessException
      */
-    public static <T> List<T> importExcel(Workbook book , Class<T> clazz,  int sheetIndex, int startRow, int endRow) throws InstantiationException, IllegalAccessException {
+    public static <T> List<T> importExcel(Workbook book , Class<T> clazz,  int sheetIndex, int startRow, int endRow) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         return ExcelConverter.getBeanListFromWorkBook(book, clazz,sheetIndex, startRow,endRow);
     }
 

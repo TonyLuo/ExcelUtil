@@ -12,6 +12,7 @@ import com.github.tonyluo.excel.annotation.ExcelSheet;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
@@ -89,11 +90,10 @@ public class ExcelConverter {
         return sb.reverse().toString();
     }
 
-    private static <T extends Object> T convertBeanByRow(Row row, Class<T> clazz) throws IllegalAccessException, InstantiationException {
+    private static <T extends Object> T convertBeanByRow(Row row, Class<T> clazz) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
 
 
-        T entity;
-        entity = clazz.newInstance();
+        T entity = clazz.newInstance();
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             if (!field.isAnnotationPresent(ExcelCell.class))
@@ -135,8 +135,16 @@ public class ExcelConverter {
                     cellValue = cell.getRichStringCellValue().getString();
             }
 
+
             field.setAccessible(true);
+            String constraintClass = excelCell.constraintClass();
+            if (StringUtils.isNotEmpty(constraintClass)) {
+                CellConstraint cellConstraint = CellConstraint.getInstance(constraintClass);
+                cellValue = cellConstraint.getAndFormatCellValue(cellValue);
+            }
+
             field.set(entity, FieldParser.parseValue(field, cellValue));
+
 
         }
         return entity;
@@ -154,7 +162,7 @@ public class ExcelConverter {
     }
 
 
-    public static <T> List<T> getBeanListFromWorkBook(Workbook book, Class<T> clazz, int startRow) throws IllegalAccessException, InstantiationException {
+    public static <T> List<T> getBeanListFromWorkBook(Workbook book, Class<T> clazz, int startRow) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         //start from second row, skip the header
         return getBeanListFromWorkBook(book, clazz, startRow, -1);
 
@@ -162,39 +170,37 @@ public class ExcelConverter {
     }
 
     /**
-     * @param book Workbook
-     * @param clazz class
+     * @param book     Workbook
+     * @param clazz    class
      * @param startRow <p>start row</p>
-     * @param endRow <p>end row, if endRow = -1, will get the last row of the sheet</p>
-     * @param <T> class
+     * @param endRow   <p>end row, if endRow = -1, will get the last row of the sheet</p>
+     * @param <T>      class
      * @return java bean list
      * @throws IllegalAccessException IllegalAccessException
      * @throws InstantiationException InstantiationException
      */
-    public static <T> List<T> getBeanListFromWorkBook(Workbook book, Class<T> clazz, int startRow, int endRow) throws IllegalAccessException, InstantiationException {
+    public static <T> List<T> getBeanListFromWorkBook(Workbook book, Class<T> clazz, int startRow, int endRow) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
 
-        return getBeanListFromWorkBook(book,clazz,0,startRow,endRow);
+        return getBeanListFromWorkBook(book, clazz, 0, startRow, endRow);
     }
 
     /**
-     *
-     * @param book Workbook
-     * @param clazz class
+     * @param book       Workbook
+     * @param clazz      class
      * @param sheetIndex sheetIndex
-     * @param startRow <p>start row</p>
-     * @param endRow <p>end row, if endRow = -1, will get the last row of the sheet</p>
-     * @param <T> class
+     * @param startRow   <p>start row</p>
+     * @param endRow     <p>end row, if endRow = -1, will get the last row of the sheet</p>
+     * @param <T>        class
      * @return java bean list
      * @throws IllegalAccessException IllegalAccessException
      * @throws InstantiationException InstantiationException
      */
-    public static <T> List<T> getBeanListFromWorkBook(Workbook book, Class<T> clazz, int sheetIndex, int startRow, int endRow) throws IllegalAccessException, InstantiationException {
+    public static <T> List<T> getBeanListFromWorkBook(Workbook book, Class<T> clazz, int sheetIndex, int startRow, int endRow) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         List<T> list = new ArrayList<T>();
         Sheet sheet = book.getSheetAt(sheetIndex);
         if (endRow < 0) {
             endRow = sheet.getLastRowNum();
         }
-
         for (int i = startRow; i <= endRow; i++) {
             T t = convertBeanByRow(sheet.getRow(i), clazz);
             list.add(t);
@@ -202,7 +208,7 @@ public class ExcelConverter {
         return list;
     }
 
-    private static void setCellStyleAndValue(Object valueObject, Field field, Workbook workbook, Cell cell) {
+    private static void setCellStyleAndValue(Object valueObject, Field field, Workbook workbook, Cell cell) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
 
         ExcelCell excelCell = field.getAnnotation(ExcelCell.class);
         if (null == excelCell) {
@@ -217,9 +223,19 @@ public class ExcelConverter {
             return;
         }
 
-        cell.setCellType(NUMERIC);
 
         String value = StringUtils.trimToEmpty(valueObject.toString());
+        String constraintClass = excelCell.constraintClass();
+        if (StringUtils.isNotEmpty(constraintClass)) {
+
+            CellConstraint cellConstraint = CellConstraint.getInstance(constraintClass);
+            if(cellConstraint.setAndFormatCellValue(cell,valueObject)){
+                return;
+            }
+
+        }
+        cell.setCellType(NUMERIC);
+
         if (String.class.equals(fieldType)) {
             cell.setCellType(STRING);
             cell.setCellValue(value);
@@ -279,7 +295,6 @@ public class ExcelConverter {
 //        cell.setCellStyle(cellStyle);
 
 
-
     }
 
     private static CellStyle setCellStyle(Workbook workbook, Class<?> fieldType, Cell cell, ExcelCell excelCell) {
@@ -297,7 +312,7 @@ public class ExcelConverter {
             cellStyle.setDataFormat(createHelper.createDataFormat().getFormat(excelCell.dateFormat()));
 
         }
-        if(StringUtils.isNotEmpty(excelCell.format())){
+        if (StringUtils.isNotEmpty(excelCell.format())) {
             DataFormat format = workbook.createDataFormat();
             cellStyle.setDataFormat(format.getFormat(excelCell.format()));
 
@@ -309,7 +324,7 @@ public class ExcelConverter {
         return cellStyle;
     }
 
-    protected static <T> void setRowWithBean(Workbook workbook, SXSSFSheet sheet, Row row, T entity, boolean isHeader) throws IllegalAccessException, InstantiationException {
+    protected static <T> void setRowWithBean(Workbook workbook, XSSFSheet sheet, Row row, T entity, boolean isHeader) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         Field[] fields = entity.getClass().getDeclaredFields();
 
         for (Field field : fields) {
@@ -329,6 +344,8 @@ public class ExcelConverter {
 
                     Object fieldValue = field.get(entity);
                     String valueObject = FieldParser.formatValue(field, fieldValue);
+
+
                     setCellStyleAndValue(valueObject, field, workbook, cell);
 
                 }
@@ -339,7 +356,7 @@ public class ExcelConverter {
 
     }
 
-    private static <T> void setSheetHeader(Workbook workbook, SXSSFSheet sheet, T entity, Field field, ExcelCell excelCell, Cell cell) {
+    private static <T> void setSheetHeader(Workbook workbook, XSSFSheet sheet, T entity, Field field, ExcelCell excelCell, Cell cell) {
         String colName = excelCell.name();
         if (StringUtils.isEmpty(colName)) {
             colName = field.getName();
@@ -446,21 +463,21 @@ public class ExcelConverter {
 
     }
 
-    public static <T> SXSSFWorkbook generateWorkbook(List<T> entityList) throws InstantiationException, IllegalAccessException {
+    public static <T> XSSFWorkbook generateWorkbook(List<T> entityList) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
 
         if (entityList == null || entityList.size() == 0) {
             return null;
         }
 
         // Create a Workbook
-//        Workbook workbook = new XSSFWorkbook(); // new HSSFWorkbook() for generating `.xls` file
-        SXSSFWorkbook workbook = new SXSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
-        workbook.setCompressTempFiles(true); // temp files will be gzipped
+        XSSFWorkbook workbook = new XSSFWorkbook(); // new HSSFWorkbook() for generating `.xls` file
+//        XSSFWorkbook workbook = new XSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
+//        workbook.setCompressTempFiles(true); // temp files will be gzipped
 
 
         T entity = entityList.get(0);
-        SXSSFSheet sheet = createSheetWithHeader(workbook, entity);
-        sheet.trackAllColumnsForAutoSizing();
+        XSSFSheet sheet = createSheetWithHeader(workbook, entity);
+//        sheet.trackAllColumnsForAutoSizing();
         // Create Other rows and cells with employees data
         int rowNum = 1;
         for (T e : entityList) {
@@ -469,13 +486,13 @@ public class ExcelConverter {
 
         }
 
-        // reset columns
-        resetColumn(sheet, entity);
+        // reset sheet
+        reArrangeSheet(sheet, entity,1,rowNum);
 
         return workbook;
     }
 
-    private static <T> void resetColumn(Sheet sheet, T entity) {
+    private static <T> void reArrangeSheet(XSSFSheet sheet, T entity, int firstRow, int lastRow) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         Field[] fields = entity.getClass().getDeclaredFields();
         for (Field field : fields) {
             if (!field.isAnnotationPresent(ExcelCell.class)) {
@@ -486,14 +503,20 @@ public class ExcelConverter {
             int col = getColumnIndex(excelCell);
             int width = excelCell.width();
             if (width > -1) {
-                if(width > 0){
-                    width =  (width + 2) * 256 ;
+                if (width > 0) {
+                    width = (width + 2) * 256;
                 }
                 // 1/256th of a character width
                 sheet.setColumnWidth(col, width);
 
             } else {
                 sheet.autoSizeColumn(col);
+            }
+
+            String constraintClass = excelCell.constraintClass();
+            if (StringUtils.isNotEmpty(constraintClass)) {
+                CellConstraint cellConstraint = CellConstraint.getInstance(constraintClass);
+                cellConstraint.createConstraint(sheet,firstRow,lastRow,col,col);
             }
             if (excelCell.hidden()) {
                 sheet.setColumnHidden(col, true);
@@ -502,7 +525,7 @@ public class ExcelConverter {
     }
 
 
-    private static <T> SXSSFSheet createSheetWithHeader(SXSSFWorkbook workbook, T entity) throws InstantiationException, IllegalAccessException {
+    private static <T> XSSFSheet createSheetWithHeader(XSSFWorkbook workbook, T entity) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         String sheetName = entity.getClass().getSimpleName();
         ExcelSheet excelSheet = entity.getClass().getAnnotation(ExcelSheet.class);
         if (excelSheet != null) {
@@ -512,7 +535,7 @@ public class ExcelConverter {
 
         }
 
-        SXSSFSheet existSheet = workbook.getSheet(sheetName);
+        XSSFSheet existSheet = workbook.getSheet(sheetName);
         if (existSheet != null) {
             for (int i = 2; i <= 1000; i++) {
                 String newSheetName = sheetName.concat(String.valueOf(i));  // avoid sheetName duplicate
@@ -526,7 +549,7 @@ public class ExcelConverter {
             }
         }
 
-        SXSSFSheet sheet = workbook.createSheet(sheetName);
+        XSSFSheet sheet = workbook.createSheet(sheetName);
 
         if (excelSheet != null) {
             int colSplit = excelSheet.colSplit();

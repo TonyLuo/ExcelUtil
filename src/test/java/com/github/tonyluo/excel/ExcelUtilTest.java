@@ -18,7 +18,7 @@ public class ExcelUtilTest {
     }
 
     @Test
-    public void importFromPath() throws IOException, InstantiationException, IllegalAccessException {
+    public void importFromPath() throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         List<Goods> list = ExcelUtil.importFromPath("src/test/resources/goods.xlsx", Goods.class,1);
         for (Goods goods : list) {
             System.out.println(goods);

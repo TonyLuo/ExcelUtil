@@ -30,11 +30,16 @@ public class Goods {
     @ExcelCell(col="G", name="数量", comment = "测试G1单元格备注功能")
     private int quantity;
 
-    @ExcelCell(col="H", name="价格",hidden = true)
+    @ExcelCell(col="H", name="价格",hidden = true )
     private double price;
 
-    @ExcelCell(col="I", name="售价",format ="#,##0.00")
+    @ExcelCell(col="I", name="售价",format ="#,##0.00",
+            constraintClass="com.github.tonyluo.excel.GoodsConstraint$SellPriceConstraint")
     private Float sellPrice;
+
+    @ExcelCell(col="J", name="类型",
+            constraintClass="com.github.tonyluo.excel.GoodsConstraint$TypeConstraint")
+    private Integer type;
 
     @Override
     public String toString() {
