@@ -10,8 +10,6 @@ package com.github.tonyluo.excel.util;
 import com.github.tonyluo.excel.annotation.ExcelCell;
 import com.github.tonyluo.excel.annotation.ExcelSheet;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -516,7 +514,7 @@ public class ExcelConverter {
             String constraintClass = excelCell.constraintClass();
             if (StringUtils.isNotEmpty(constraintClass)) {
                 CellConstraint cellConstraint = CellConstraint.getInstance(constraintClass);
-                cellConstraint.createConstraint(sheet,firstRow,lastRow,col,col);
+                cellConstraint.createConstraint(sheet,firstRow,lastRow + 100, col,col);
             }
             if (excelCell.hidden()) {
                 sheet.setColumnHidden(col, true);
