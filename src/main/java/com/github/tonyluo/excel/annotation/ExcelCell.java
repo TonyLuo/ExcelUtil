@@ -67,6 +67,7 @@ public @interface ExcelCell {
      * @return true if need lock sheet
      */
     boolean locked() default false; // ExcelSheet的protectSheet为true时候才能生效
+    boolean required() default false; // 是否必须填写，如果为true，表头对应的字体颜色为红色
 
 
     //This code will do the same but offer the user a drop down list to select a value from.

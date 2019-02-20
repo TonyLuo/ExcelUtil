@@ -27,6 +27,16 @@ public class ExcelUtilTest {
         ExcelUtil.exportToFile("src/test/resources/export-goods.xlsx", list);
 
     }
+    @Test
+    public void testImportWithNotice() throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+        List<Goods> list = ExcelUtil.importFromPath("src/test/resources/goods-with-notice.xlsx", Goods.class,2);
+        for (Goods goods : list) {
+            System.out.println(goods);
+
+        }
+        ExcelUtil.exportToFile("src/test/resources/export-goods-with-notice.xlsx", list);
+
+    }
 
     @Test
     public void importFromFile() {

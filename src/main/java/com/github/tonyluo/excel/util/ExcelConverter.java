@@ -10,6 +10,7 @@ package com.github.tonyluo.excel.util;
 import com.github.tonyluo.excel.annotation.ExcelCell;
 import com.github.tonyluo.excel.annotation.ExcelSheet;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -227,7 +228,7 @@ public class ExcelConverter {
         if (StringUtils.isNotEmpty(constraintClass)) {
 
             CellConstraint cellConstraint = CellConstraint.getInstance(constraintClass);
-            if(cellConstraint.setAndFormatCellValue(cell,valueObject)){
+            if (cellConstraint.setAndFormatCellValue(cell, valueObject)) {
                 return;
             }
 
@@ -299,6 +300,11 @@ public class ExcelConverter {
         CellStyle cellStyle = workbook.createCellStyle();
         cellStyle.setWrapText(excelCell.wrapText()); //Set wordwrap
         cellStyle.setLocked(excelCell.locked()); //Set locked
+        if (excelCell.locked()) {
+            cellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+            cellStyle.setFillBackgroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+            cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        }
         cellStyle.setAlignment(excelCell.align());
 
         if (Date.class.equals(fieldType) || Instant.class.equals(fieldType)) {
@@ -359,6 +365,7 @@ public class ExcelConverter {
         if (StringUtils.isEmpty(colName)) {
             colName = field.getName();
         }
+
         //增加备注
         String commentText = excelCell.comment();
         if (StringUtils.isNotEmpty(commentText)) {
@@ -382,6 +389,9 @@ public class ExcelConverter {
         Font headerFont = workbook.createFont();
         headerFont.setBold(true);
         headerFont.setFontHeightInPoints((short) 14);
+        if (excelCell.required()) {
+            headerFont.setColor(IndexedColors.RED.getIndex());
+        }
         //headerFont.setColor(IndexedColors.RED.getIndex());
         // Create a CellStyle with the font
         headerCellStyle.setFont(headerFont);
@@ -399,6 +409,53 @@ public class ExcelConverter {
         cell.setCellStyle(headerCellStyle);
         cell.setCellValue(colName);
     }
+
+    private static <T> void createSheetNotice(Workbook workbook, Sheet sheet, Row row, ExcelSheet excelSheet, T entity) {
+        Cell cell = row.createCell(0);
+
+        CellStyle noticeCellStyle = workbook.createCellStyle();
+        // Create a Font for styling header cells
+        Font noticeFont = workbook.createFont();
+        noticeFont.setBold(true);
+        noticeFont.setFontHeightInPoints((short) 16);
+
+        // Create a CellStyle with the font
+        noticeCellStyle.setFont(noticeFont);
+        noticeCellStyle.setWrapText(true); //Set wordwrap
+        noticeCellStyle.setAlignment(HorizontalAlignment.LEFT);
+        noticeCellStyle.setVerticalAlignment(VerticalAlignment.TOP);
+
+        cell.setCellStyle(noticeCellStyle);
+
+        //set value
+        String notice = excelSheet.notice();
+        cell.setCellValue(notice);
+
+        //merge cell for the notice
+        Field[] fields = entity.getClass().getDeclaredFields();
+        int lastCol = 0;
+        for (Field field : fields) {
+            if (!field.isAnnotationPresent(ExcelCell.class)) {
+                continue;
+            }
+            lastCol++;
+        }
+
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, lastCol - 1));
+
+        //set row height
+        String regex = "\\r?\\n";
+        String noticeList[] = notice.split(regex);
+        int lineCount = noticeList.length + 1;
+        if (lineCount > 1) {
+            short fontHeight = noticeFont.getFontHeightInPoints();
+            lineCount = lineCount + 2;
+            short finalRowHeight = (short) (((fontHeight * lineCount + (lineCount * 15)) * 10));
+            row.setHeight(finalRowHeight);
+
+        }
+    }
+
 
     protected static <T> Object[] getRowByBean(T entity) throws IllegalAccessException {
         Field[] fields = entity.getClass().getDeclaredFields();
@@ -472,25 +529,27 @@ public class ExcelConverter {
 //        XSSFWorkbook workbook = new XSSFWorkbook(100); // keep 100 rows in memory, exceeding rows will be flushed to disk
 //        workbook.setCompressTempFiles(true); // temp files will be gzipped
 
-
         T entity = entityList.get(0);
-        XSSFSheet sheet = createSheetWithHeader(workbook, entity);
+        XSSFSheet sheet = createSheet(workbook, entity);
+
+        int startRow = createSheetHeader(workbook, sheet, entity);
 //        sheet.trackAllColumnsForAutoSizing();
         // Create Other rows and cells with employees data
-        int rowNum = 1;
+
+        int rowNumber = startRow;
         for (T e : entityList) {
-            Row row = sheet.createRow(rowNum++);
+            Row row = sheet.createRow(rowNumber++);
             setRowWithBean(workbook, sheet, row, e, false);
 
         }
 
         // reset sheet
-        reArrangeSheet(sheet, entity,1,rowNum);
+        reArrangeSheet(sheet, entity, startRow);
 
         return workbook;
     }
 
-    private static <T> void reArrangeSheet(XSSFSheet sheet, T entity, int firstRow, int lastRow) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+    private static <T> void reArrangeSheet(XSSFSheet sheet, T entity, int firstRow) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         Field[] fields = entity.getClass().getDeclaredFields();
         for (Field field : fields) {
             if (!field.isAnnotationPresent(ExcelCell.class)) {
@@ -514,7 +573,7 @@ public class ExcelConverter {
             String constraintClass = excelCell.constraintClass();
             if (StringUtils.isNotEmpty(constraintClass)) {
                 CellConstraint cellConstraint = CellConstraint.getInstance(constraintClass);
-                cellConstraint.createConstraint(sheet,firstRow,lastRow + 100, col,col);
+                cellConstraint.createConstraint(sheet, firstRow, sheet.getLastRowNum() + 100, col, col);
             }
             if (excelCell.hidden()) {
                 sheet.setColumnHidden(col, true);
@@ -523,7 +582,25 @@ public class ExcelConverter {
     }
 
 
-    private static <T> XSSFSheet createSheetWithHeader(XSSFWorkbook workbook, T entity) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+    private static <T> int createSheetHeader(XSSFWorkbook workbook, XSSFSheet sheet, T entity) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+        ExcelSheet excelSheet = entity.getClass().getAnnotation(ExcelSheet.class);
+        int startRow = 0;
+        if (excelSheet != null && StringUtils.isNotEmpty(StringUtils.trimToEmpty(excelSheet.notice()))) {
+            Row noticeRow = sheet.createRow(startRow);
+            startRow++;
+            createSheetNotice(workbook, sheet, noticeRow, excelSheet, entity);
+        }
+        // Create a Row
+        Row headerRow = sheet.createRow(startRow);
+        startRow++;
+        // Create cells
+        setRowWithBean(workbook, sheet, headerRow, entity, true);
+
+
+        return startRow;
+    }
+
+    private static <T> XSSFSheet createSheet(XSSFWorkbook workbook, T entity) {
         String sheetName = entity.getClass().getSimpleName();
         ExcelSheet excelSheet = entity.getClass().getAnnotation(ExcelSheet.class);
         if (excelSheet != null) {
@@ -567,13 +644,6 @@ public class ExcelConverter {
 
 
         }
-        // Create a Row
-        Row headerRow = sheet.createRow(0);
-
-        // Create cells
-        setRowWithBean(workbook, sheet, headerRow, entity, true);
-
-
         return sheet;
     }
 
