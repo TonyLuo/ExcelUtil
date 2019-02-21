@@ -53,7 +53,7 @@ public @interface ExcelSheet {
     boolean protectSheet() default false;
     String protectSheetPassword() default "";
 
-    String notice() default "填写须知：\n1、不能增加、删除列；\n3、不能修改灰色单元格；\n2、红色字段为必填字段，黑色字段为选填字段；\n";
+    String notice() default "填写须知：\n1、不能增加、删除列；\n2、不能修改灰色单元格；\n3、红色字段为必填字段，黑色字段为选填字段；\n";
 
 
 }
