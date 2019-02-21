@@ -449,9 +449,9 @@ public class ExcelConverter {
         int lineCount = noticeList.length + 1;
         if (lineCount > 1) {
             short fontHeight = noticeFont.getFontHeightInPoints();
-            lineCount = lineCount + 2;
-            short finalRowHeight = (short) (((fontHeight * lineCount + (lineCount * 15)) * 10));
-            row.setHeight(finalRowHeight);
+            lineCount = lineCount + 3;
+            short finalRowHeight = (short) (fontHeight * lineCount );
+            row.setHeightInPoints(finalRowHeight);
 
         }
     }
