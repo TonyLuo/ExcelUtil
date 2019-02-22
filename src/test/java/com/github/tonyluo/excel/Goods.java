@@ -47,6 +47,8 @@ public class Goods {
     @ExcelCell(col="J", name="类型",
             constraintClass="com.github.tonyluo.excel.GoodsConstraint$TypeConstraint")
     private Integer type;
+    @ExcelCell(col="K", name="电话")
+    private String phone;
 
     @Override
     public String toString() {
@@ -55,6 +57,7 @@ public class Goods {
             ", unit='" + unit + '\'' +
             ", format='" + format + '\'' +
             ", factory='" + factory + '\'' +
+            ", phone='" + phone + '\'' +
             '}';
     }
 }

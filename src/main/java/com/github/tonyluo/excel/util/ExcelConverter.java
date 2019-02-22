@@ -94,6 +94,7 @@ public class ExcelConverter {
 
         T entity = clazz.newInstance();
         Field[] fields = clazz.getDeclaredFields();
+        DataFormatter formatter = new DataFormatter();
         for (Field field : fields) {
             if (!field.isAnnotationPresent(ExcelCell.class))
                 continue;
@@ -116,7 +117,10 @@ public class ExcelConverter {
                         cellValue = cell.getDateCellValue();
 
                     } else {
-                        cellValue = cell.getNumericCellValue();
+                        //https://poi.apache.org/apidocs/dev/org/apache/poi/ss/usermodel/Cell.html#setCellType%28int%29
+                        //If what you want to do is get a String value for your numeric cell, stop!. This is not the way to do it. Instead, for fetching the string value of a numeric or boolean or date cell, use DataFormatter instead.
+                        cellValue = formatter.formatCellValue(cell);
+//                        cellValue = cell.getNumericCellValue();
                     }
                     break;
                 case BOOLEAN:
