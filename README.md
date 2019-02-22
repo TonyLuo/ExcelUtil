@@ -32,7 +32,7 @@ Usage:
 <dependency>
   <groupId>com.github.tonyluo</groupId>
   <artifactId>excel-util</artifactId>
-  <version>1.0.4</version>
+  <version>1.0.5</version>
 </dependency>
 
 ```
