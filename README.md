@@ -20,19 +20,19 @@ Usage:
  <dependency>
     <groupId>org.apache.poi</groupId>
     <artifactId>poi</artifactId>
-    <version>4.0.1</version>
+    <version>4.1.2</version>
 </dependency>
 
 <dependency>
     <groupId>org.apache.poi</groupId>
     <artifactId>poi-ooxml</artifactId>
-    <version>4.0.1</version>
+    <version>4.1.2</version>
 </dependency>
 
 <dependency>
   <groupId>com.github.tonyluo</groupId>
   <artifactId>excel-util</artifactId>
-  <version>1.0.5</version>
+  <version>1.0.6</version>
 </dependency>
 
 ```
