@@ -7,7 +7,9 @@
 
     <groupId>com.github.tonyluo</groupId>
     <artifactId>excel-util</artifactId>
-    <version>1.0.6</version>
+<!--    <version>1.0.6</version>-->
+    <version>1.0.6-SNAPSHOT</version>
+
     <packaging>jar</packaging>
 
     <description>import/export excel util, base poi</description>
@@ -30,7 +32,15 @@
         <developerConnection>scm:git:git@github.com:TonyLuo/ExcelUtil</developerConnection>
         <url>scm:git:git@github.com:TonyLuo/ExcelUtil</url>
     </scm>
-
+    <!-- omitted xml -->
+    <distributionManagement>
+        <repository>
+            <!--必须与 settings.xml 的 id 一致-->
+            <id>nextcoding-next-maven</id>
+            <name>maven</name>
+            <url>https://nextcoding-maven.pkg.coding.net/repository/next/maven/</url>
+        </repository>
+    </distributionManagement>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <gpg.executable>gpg2</gpg.executable>
@@ -59,21 +69,21 @@
 
     </dependencies>
 
-    <distributionManagement>
-        <site>
-            <id>master</id>
-            <name>ExcelUtil GitHub Pages</name>
-            <url>https://github.com/TonyLuo/ExcelUtil.git</url>
-        </site>
-        <snapshotRepository>
-            <id>nexus-release</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>nexus-release</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
+<!--    <distributionManagement>-->
+<!--        <site>-->
+<!--            <id>master</id>-->
+<!--            <name>ExcelUtil GitHub Pages</name>-->
+<!--            <url>https://github.com/TonyLuo/ExcelUtil.git</url>-->
+<!--        </site>-->
+<!--        <snapshotRepository>-->
+<!--            <id>nexus-release</id>-->
+<!--            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>-->
+<!--        </snapshotRepository>-->
+<!--        <repository>-->
+<!--            <id>nexus-release</id>-->
+<!--            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
+<!--        </repository>-->
+<!--    </distributionManagement>-->
     <build>
         <plugins>
             <plugin>
@@ -110,7 +120,7 @@
                 </configuration>
             </plugin>
             <!-- mvn clean javadoc:jar source:jar deploy -P release -Dgpg.passphrase=xxxx -->
-
+<!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
@@ -136,6 +146,7 @@
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
+      -->
         </plugins>
     </build>
     <profiles>
