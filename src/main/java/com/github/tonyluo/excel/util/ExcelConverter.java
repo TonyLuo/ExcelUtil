@@ -9,6 +9,7 @@ package com.github.tonyluo.excel.util;
 
 import com.github.tonyluo.excel.annotation.ExcelCell;
 import com.github.tonyluo.excel.annotation.ExcelSheet;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -20,6 +21,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -68,6 +70,9 @@ public class ExcelConverter {
      */
     public static int columnName2Index(String name) {
         int number = 0;
+        if (StringUtils.isBlank(name)) {
+            return number;
+        }
         name = name.toUpperCase();
         for (int i = 0; i < name.length(); i++) {
             number = number * 26 + (name.charAt(i) - ('A' - 1));
@@ -94,13 +99,19 @@ public class ExcelConverter {
 
         T entity = clazz.newInstance();
         Field[] fields = clazz.getDeclaredFields();
+        ExcelSheet excelSheet = clazz.getAnnotation(ExcelSheet.class);
+
         DataFormatter formatter = new DataFormatter();
         for (Field field : fields) {
             if (!field.isAnnotationPresent(ExcelCell.class))
                 continue;
 
             ExcelCell excelCell = field.getAnnotation(ExcelCell.class);
-            int col = getColumnIndex(excelCell);
+            Integer col = getColumnIndex(excelSheet, field);
+            if (null == col) {
+                col = getColumnIndex(excelCell);
+            }
+
             Cell cell = row.getCell(col);
             if (cell == null)
                 continue;
@@ -151,6 +162,24 @@ public class ExcelConverter {
 
         }
         return entity;
+    }
+
+    private static Integer getColumnIndex(ExcelSheet excelSheet, Field field) {
+        if (null == excelSheet || null == field) {
+            return null;
+        }
+        String[] cols = excelSheet.cols();
+        if (null == cols || cols.length < 1) {
+            return null;
+        }
+
+        for (int i = 0; i < cols.length; i++) {
+            if (field.getName().equals(cols[i])) {
+                return i;
+            }
+
+        }
+        return null;
     }
 
     private static int getColumnIndex(ExcelCell excelCell) {
@@ -334,6 +363,7 @@ public class ExcelConverter {
 
     protected static <T> void setRowWithBean(Workbook workbook, XSSFSheet sheet, Row row, T entity, boolean isHeader) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         Field[] fields = entity.getClass().getDeclaredFields();
+        ExcelSheet excelSheet = entity.getClass().getAnnotation(ExcelSheet.class);
 
         for (Field field : fields) {
             if (!field.isAnnotationPresent(ExcelCell.class)) {
@@ -341,7 +371,10 @@ public class ExcelConverter {
             }
             field.setAccessible(true);
             ExcelCell excelCell = field.getAnnotation(ExcelCell.class);
-            int col = getColumnIndex(excelCell);
+            Integer col = getColumnIndex(excelSheet, field);
+            if (null == col) {
+                col = getColumnIndex(excelCell);
+            }
             if (row != null) {
                 Cell cell = row.createCell(col);
 
@@ -463,6 +496,7 @@ public class ExcelConverter {
 
     protected static <T> Object[] getRowByBean(T entity) throws IllegalAccessException {
         Field[] fields = entity.getClass().getDeclaredFields();
+        ExcelSheet excelSheet = entity.getClass().getAnnotation(ExcelSheet.class);
         int columnLength = 0;
         for (Field field : fields) {
             if (field.isAnnotationPresent(ExcelCell.class)) {
@@ -478,7 +512,11 @@ public class ExcelConverter {
 
             field.setAccessible(true);
             ExcelCell excelCell = field.getAnnotation(ExcelCell.class);
-            int col = getColumnIndex(excelCell);
+
+            Integer col = getColumnIndex(excelSheet, field);
+            if (null == col) {
+                col = getColumnIndex(excelCell);
+            }
             Object fieldValue = field.get(entity);
             if (fieldValue == null) {
                 continue;
@@ -494,6 +532,7 @@ public class ExcelConverter {
 
     protected static <T> String[] getRowHeaderByClass(Class<T> clazz) {
         Field[] fields = clazz.getDeclaredFields();
+        ExcelSheet excelSheet = clazz.getAnnotation(ExcelSheet.class);
         int columnLength = 0;
         for (Field field : fields) {
             if (field.isAnnotationPresent(ExcelCell.class)) {
@@ -508,7 +547,10 @@ public class ExcelConverter {
 
             field.setAccessible(true);
             ExcelCell excelCell = field.getAnnotation(ExcelCell.class);
-            int col = getColumnIndex(excelCell);
+            Integer col = getColumnIndex(excelSheet, field);
+            if (null == col) {
+                col = getColumnIndex(excelCell);
+            }
             String colName = excelCell.name();
             if (StringUtils.isEmpty(colName)) {
                 colName = field.getName();
@@ -555,13 +597,18 @@ public class ExcelConverter {
 
     private static <T> void reArrangeSheet(XSSFSheet sheet, T entity, int firstRow) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         Field[] fields = entity.getClass().getDeclaredFields();
+        ExcelSheet excelSheet = entity.getClass().getAnnotation(ExcelSheet.class);
+
         for (Field field : fields) {
             if (!field.isAnnotationPresent(ExcelCell.class)) {
                 continue;
             }
             field.setAccessible(true);
             ExcelCell excelCell = field.getAnnotation(ExcelCell.class);
-            int col = getColumnIndex(excelCell);
+            Integer col = getColumnIndex(excelSheet, field);
+            if (null == col) {
+                col = getColumnIndex(excelCell);
+            }
             int width = excelCell.width();
             if (width > -1) {
                 if (width > 0) {
