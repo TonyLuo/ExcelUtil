@@ -107,10 +107,7 @@ public class ExcelConverter {
                 continue;
 
             ExcelCell excelCell = field.getAnnotation(ExcelCell.class);
-            Integer col = getColumnIndex(excelSheet, field);
-            if (null == col) {
-                col = getColumnIndex(excelCell);
-            }
+            Integer col = getColumnIndex(excelSheet, field, excelCell);
 
             Cell cell = row.getCell(col);
             if (cell == null)
@@ -162,6 +159,14 @@ public class ExcelConverter {
 
         }
         return entity;
+    }
+
+    private static Integer getColumnIndex(ExcelSheet excelSheet, Field field, ExcelCell excelCell) {
+        Integer col = getColumnIndex(excelSheet, field);
+        if (null == col) {
+            col = getColumnIndex(excelCell);
+        }
+        return col;
     }
 
     private static Integer getColumnIndex(ExcelSheet excelSheet, Field field) {
@@ -371,10 +376,7 @@ public class ExcelConverter {
             }
             field.setAccessible(true);
             ExcelCell excelCell = field.getAnnotation(ExcelCell.class);
-            Integer col = getColumnIndex(excelSheet, field);
-            if (null == col) {
-                col = getColumnIndex(excelCell);
-            }
+            Integer col = getColumnIndex(excelSheet, field, excelCell);
             if (row != null) {
                 Cell cell = row.createCell(col);
 
@@ -513,10 +515,7 @@ public class ExcelConverter {
             field.setAccessible(true);
             ExcelCell excelCell = field.getAnnotation(ExcelCell.class);
 
-            Integer col = getColumnIndex(excelSheet, field);
-            if (null == col) {
-                col = getColumnIndex(excelCell);
-            }
+            Integer col = getColumnIndex(excelSheet, field, excelCell);
             Object fieldValue = field.get(entity);
             if (fieldValue == null) {
                 continue;
@@ -547,10 +546,7 @@ public class ExcelConverter {
 
             field.setAccessible(true);
             ExcelCell excelCell = field.getAnnotation(ExcelCell.class);
-            Integer col = getColumnIndex(excelSheet, field);
-            if (null == col) {
-                col = getColumnIndex(excelCell);
-            }
+            Integer col = getColumnIndex(excelSheet, field, excelCell);
             String colName = excelCell.name();
             if (StringUtils.isEmpty(colName)) {
                 colName = field.getName();
@@ -605,10 +601,7 @@ public class ExcelConverter {
             }
             field.setAccessible(true);
             ExcelCell excelCell = field.getAnnotation(ExcelCell.class);
-            Integer col = getColumnIndex(excelSheet, field);
-            if (null == col) {
-                col = getColumnIndex(excelCell);
-            }
+            Integer col = getColumnIndex(excelSheet, field, excelCell);
             int width = excelCell.width();
             if (width > -1) {
                 if (width > 0) {
