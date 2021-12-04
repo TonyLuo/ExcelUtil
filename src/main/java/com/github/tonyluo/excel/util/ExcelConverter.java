@@ -108,9 +108,11 @@ public class ExcelConverter {
 
             ExcelCell excelCell = field.getAnnotation(ExcelCell.class);
             Integer col = getColumnIndex(excelSheet, field, excelCell);
-
+            if (col == -1 ){
+                continue;
+            }
             Cell cell = row.getCell(col);
-            if (col == -1 || cell == null){
+            if (cell == null){
                 continue;
             }
 
