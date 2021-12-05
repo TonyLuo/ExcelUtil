@@ -1,5 +1,7 @@
 package com.github.tonyluo.excel;
 
+import com.github.tonyluo.excel.util.ExcelConverter;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -19,7 +21,7 @@ public class ExcelUtilTest {
 
     @Test
     public void importFromPath() throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
-        List<Goods> list = ExcelUtil.importFromPath("src/test/resources/goods.xlsx", Goods.class,1);
+        List<Goods> list = ExcelUtil.importFromPath("src/test/resources/goods.xlsx", Goods.class, 1);
         for (Goods goods : list) {
             System.out.println(goods);
 
@@ -27,9 +29,10 @@ public class ExcelUtilTest {
         ExcelUtil.exportToFile("src/test/resources/export-goods.xlsx", list);
 
     }
+
     @Test
     public void testImportWithNotice() throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
-        List<Goods> list = ExcelUtil.importFromPath("src/test/resources/goods-with-notice.xlsx", Goods.class,2);
+        List<Goods> list = ExcelUtil.importFromPath("src/test/resources/goods-with-notice.xlsx", Goods.class, 2);
         for (Goods goods : list) {
             System.out.println(goods);
 
@@ -39,7 +42,9 @@ public class ExcelUtilTest {
     }
 
     @Test
-    public void importFromFile() {
+    public void replaceBlankChar() {
+        Assert.assertEquals("123", " 1 2     3".replaceAll("\\s*", ""));
+
     }
 
     @Test
