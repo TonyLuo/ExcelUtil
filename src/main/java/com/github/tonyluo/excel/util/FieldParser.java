@@ -57,6 +57,9 @@ public final class FieldParser {
 
     public static Boolean parseBoolean(String value) {
         value = trimValue(value);
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
         if ("Y".equalsIgnoreCase(value) ||
                 "YES".equalsIgnoreCase(value) ||
                 "1".equalsIgnoreCase(value) ||
@@ -118,7 +121,6 @@ public final class FieldParser {
             return null;
         }
         try {
-            value = value.replaceAll("　", "");
             return Float.valueOf(value);
         } catch (NumberFormatException e) {
             throw new RuntimeException("[parseFloat] illegal input. value=" + value, e);
@@ -149,7 +151,8 @@ public final class FieldParser {
     }
 
     public static Instant parseInstant(String value, ExcelCell excelCell) {
-        if (!trimAndVerifyValue(value)) {
+        value = trimValue(value);
+        if (StringUtils.isEmpty(value)) {
             return null;
         }
 
@@ -220,16 +223,11 @@ public final class FieldParser {
     public static Object parseValue(Field field, Object valueObject) {
         if (valueObject == null) {
             return null;
-
         }
         Class<?> fieldType = field.getType();
 
         ExcelCell excelCell = field.getAnnotation(ExcelCell.class);
 
-
-		/*if (Byte.class.equals(fieldType) || Byte.TYPE.equals(fieldType)) {
-			return parseByte(value);
-		} else */
         String value = valueObject.toString().trim();
 
         if (String.class.equals(fieldType)) {
@@ -248,12 +246,12 @@ public final class FieldParser {
             return parseBigDecimal(value);
         } else if (Date.class.equals(fieldType)) {
             return parseDate(value, excelCell);
-
         } else if (Instant.class.equals(fieldType)) {
             return parseInstant(value, excelCell);
-
         } else if (Boolean.class.equals(fieldType) || Boolean.TYPE.equals(fieldType)) {
             return parseBoolean(value);
+        } else if (Byte.class.equals(fieldType) || Byte.TYPE.equals(fieldType)) {
+            return parseByte(value);
         } else {
             throw new RuntimeException("[parseValue] illegal type, type=" + fieldType);
         }
