@@ -151,13 +151,14 @@ public final class FieldParser {
     }
 
     public static Instant parseInstant(String value, ExcelCell excelCell) {
-        value = trimValue(value);
+        value = StringUtils.trimToEmpty(value);
         if (StringUtils.isEmpty(value)) {
             return null;
         }
 
         try {
             if (NumberUtils.isCreatable(value)) {
+                value = trimValue(value);
                 double doubleValue = Double.parseDouble(value);
                 Date date = DateUtil.getJavaDate(doubleValue);
                 return date.toInstant();
